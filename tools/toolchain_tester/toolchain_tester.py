@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # Copyright (c) 2011 The Native Client Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -134,7 +134,7 @@ def MakeExecutableCustom(config, test, extra):
     command = shlex.split(command)
     try:
       retcode = RunCommand(command, SHOW_CONSOLE)
-    except Exception, err:
+    except Exception as err:
       Print("cannot run phase %s: %s" % (phase, str(err)))
       return phase
     if retcode:
@@ -213,7 +213,7 @@ def ParseCommandLineArgs(argv):
                                 'check_excludes',
                                 'tmp=',
                                 'concurrency='])
-  except getopt.GetoptError, err:
+  except getopt.GetoptError as err:
     Print(str(err))  # will print something like 'option -a not recognized'
     sys.exit(-1)
 
