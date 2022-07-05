@@ -23,10 +23,18 @@
  * case a signal handler gets left registered.
  */
 
-/* Use 4K more than the minimum to allow breakpad to run. */
-static uint32_t g_signal_stack_size = SIGSTKSZ + 4096;
+static uint64_t g_signal_stack_size;
+
+/*
+ * Use 4K more than the minimum to allow breakpad to run.
+ * Starting with glibc >= 2.34, SIGSTKSZ is not a constant anymore so
+ * we can't directly assign it to g_signal_stack_size during compile.
+ */
+#define SIG_STACK_SIZE_DEFAULT (SIGSTKSZ + 4096ul)
 
 #define STACK_GUARD_SIZE NACL_PAGESIZE
+
+#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
 void NaClSignalStackSetSize(uint32_t size) {
   g_signal_stack_size = size;
@@ -45,9 +53,12 @@ int NaClSignalStackAllocate(void **result) {
    * occurrence of the signal handler both overrunning and doing so in
    * an exploitable way.
    */
-  uint8_t *stack = mmap(NULL, g_signal_stack_size + STACK_GUARD_SIZE,
-                        PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON,
-                        -1, 0);
+  uint8_t *stack;
+  size_t stack_size = MAX(g_signal_stack_size, SIG_STACK_SIZE_DEFAULT);
+
+  stack = mmap(NULL, stack_size + STACK_GUARD_SIZE,
+               PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON,
+               -1, 0);
   if (stack == MAP_FAILED) {
     return 0;
   }
@@ -61,8 +72,9 @@ int NaClSignalStackAllocate(void **result) {
 }
 
 void NaClSignalStackFree(void *stack) {
+  size_t stack_size = MAX(g_signal_stack_size, SIG_STACK_SIZE_DEFAULT);
   CHECK(stack != NULL);
-  if (munmap(stack, g_signal_stack_size + STACK_GUARD_SIZE) != 0) {
+  if (munmap(stack, stack_size + STACK_GUARD_SIZE) != 0) {
     NaClLog(LOG_FATAL, "Failed to munmap() signal stack:\n\t%s\n",
             strerror(errno));
   }
@@ -77,7 +89,7 @@ void NaClSignalStackRegister(void *stack) {
    * untrusted code's %esp/%rsp value.
    */
   stack_t st;
-  st.ss_size = g_signal_stack_size;
+  st.ss_size = MAX(g_signal_stack_size, SIG_STACK_SIZE_DEFAULT);
   st.ss_sp = ((uint8_t *) stack) + STACK_GUARD_SIZE;
   st.ss_flags = 0;
   if (sigaltstack(&st, NULL) != 0) {

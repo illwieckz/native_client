@@ -33,7 +33,7 @@
  */
 
 int main(void) {
-  size_t stack_size = SIGSTKSZ;
+  long stack_size = SIGSTKSZ;
   char *stack;
   stack_t st;
   int rc;

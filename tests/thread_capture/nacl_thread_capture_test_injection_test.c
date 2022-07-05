@@ -79,15 +79,21 @@ void NaClSignalHandler(int signum, siginfo_t *info, void *other) {
   exit(0);
 }
 
-static char g_nacl_altstack[SIGSTKSZ + 4096];
-
 void NaClSetSignalHandler(void) {
   struct sigaction action;
   stack_t stack;
+  /*
+   * The stack used to be statically allocated, but starting with glibc
+   * v2.34 onwards SIGSTKSZ can be a runtime computed value, so also
+   * allocate the stack dynamically instead of trying to hardcode a big
+   * enough stack size for all platforms. It doesn't need to be free'd.
+   */
+  size_t nacl_altstack_size = SIGSTKSZ + 4096;
+  void *nacl_altstack = malloc(nacl_altstack_size);
 
-  stack.ss_sp = g_nacl_altstack;
+  stack.ss_sp = nacl_altstack;
   stack.ss_flags = 0;
-  stack.ss_size = NACL_ARRAY_SIZE(g_nacl_altstack);
+  stack.ss_size = nacl_altstack_size;
   sigaltstack(&stack, (stack_t *) NULL);
 
   memset(&action, 0, sizeof action);
