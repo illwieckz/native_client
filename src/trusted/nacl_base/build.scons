@@ -50,24 +50,28 @@ if not env.Bit('windows'):
   fail_compile_c_env['CCCOM'] = Action(fail_compile_c_env['CCCOM'],
                                        exitstatfunc=FailsGood)
 
-  fail_compile_cxx_env = env.Clone()
-  fail_compile_cxx_env['CXXFLAGS'] += ['-xc++']
+  cxx_env = env.Clone()
+  cxx_env['CXXFLAGS'] += ['-xc++']
+  cxx_env['CCCOM'] = Action(cxx_env['CXXCOM'])
+
+  fail_compile_cxx_env = cxx_env.Clone()
   fail_compile_cxx_env['CCCOM'] = Action(fail_compile_cxx_env['CXXCOM'],
                                          exitstatfunc=FailsGood)
 
-  for build_env, name_modifier in [ (fail_compile_c_env, '_c'),
-                                    (fail_compile_cxx_env, '_cxx') ]:
+  for build_env, name_modifier, ok in [(env, '_c', '_ok'),
+                                       (cxx_env, '_cxx', '_ok'),
+                                       (fail_compile_c_env, '_c', ''),
+                                       (fail_compile_cxx_env, '_cxx', '')]:
     for test_base in ['nacl_base_assert_is_array',
                       'nacl_base_assert_is_pointer',
                       'nacl_base_array_size']:
-      for env_to_use, ok in [(env, '_ok'), (build_env, '')]:
 
-        obj = env_to_use.ComponentObject(test_base + ok +
-                                         name_modifier + '_test',
-                                         [test_base + ok + '_test.c'])
-        env_to_use.AlwaysBuild(obj)
-        env_to_use.Alias('small_tests', obj)
-        env_to_use.Alias('compile_tests', obj)
+      obj = build_env.ComponentObject(test_base + ok +
+                                      name_modifier + '_test',
+                                      [test_base + ok + '_test.c'])
+      build_env.AlwaysBuild(obj)
+      build_env.Alias('small_tests', obj)
+      build_env.Alias('compile_tests', obj)
 
 nacl_min_max_test_exe = env.ComponentProgram('nacl_min_max_test',
                                              ['nacl_min_max_test.c'])
