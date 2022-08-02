@@ -150,16 +150,14 @@ if host_os != 'win':
 if control_goma:
   buildbot_lib.Command(context, cmd=[sys.executable, GOMA_CTL, 'restart'])
 
-# toolchain_build outputs its own buildbot annotations, so don't use
-# buildbot_lib.Step to run it here.
-
 # The package_version tools don't have a way to distinguish canonical packages
 # (i.e. those we want to upload) from non-canonical ones; they only know how to
 # process all the archives that are present. We can't just leave out the
 # the non-canonical packages entirely because they are extracted by the
 # package_version tool.
 # First build only the packages that will be uploaded, and upload them.
-RunWithLog(ToolchainBuildCmd(sync=True, extra_flags=['--canonical-only']))
+with buildbot_lib.Step('Start toolchain build', status):
+  RunWithLog(ToolchainBuildCmd(sync=True, extra_flags=['--canonical-only']))
 
 if control_goma:
   buildbot_lib.Command(context, cmd=[sys.executable, GOMA_CTL, 'stop'])
