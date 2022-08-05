@@ -1148,49 +1148,6 @@ def HostToolsDirectToNacl(host, options):
   return tools
 
 
-def GetVSEnv(dir):
-    # Return the configured VS build environment block as a python dict.
-    # The format is a list of nul-terminated strings of the form var=val
-    # where 'var' is the environment variable name, and 'val' is its value
-    env = os.environ.copy()
-    with open(os.path.join(dir, 'environment.x64'), 'rb') as f:
-        entries = f.read().decode().split('\0')
-        for e in entries:
-            if not e:
-                continue
-            var, val = e.split('=', 1)
-            env[var] = val
-    return env
-
-def PrepareVSEnv():
-  outdir = os.path.join(os.path.dirname(NACL_DIR), 'build')
-
-  with open(os.path.join('..', 'build', 'win_toolchain.json')) as f:
-    paths = json.load(f)
-
-  # Write path information (usable by a non-chromium build) into an
-  # environment block
-  runtime_dirs = os.pathsep.join(paths['runtime_dirs'])
-  subprocess.check_call(['vpython.bat',
-                         os.path.join('..', 'build', 'toolchain', 'win',
-                                      'setup_toolchain.py'),
-                         paths['path'], paths['win_sdk'], runtime_dirs, 'win',
-                         'x64', 'environment.x64'],
-                        cwd=outdir)
-  env = GetVSEnv(outdir)
-
-  # This value matches the version of cl.exe currently used by the bots, but
-  # it needs to be made explicit in order to run on Goma
-  # (crbug.com/1292405). This will need to be updated when LLVM requires a newer
-  # MSVC version.
-  # Flags need to be injected via the env (rather than on the CMake command
-  # line) so they add to rather than overriding the default flags.
-  assert('CFLAGS' not in env)
-  assert('CXXFLAGS' not in env)
-  env['CXXFLAGS'] = env['CFLAGS'] = '-fmsc-version=1926'
-
-  return env
-
 def HostToolsSaigo(host, options):
   def H(component_name):
     return FlavoredName(component_name, host, options)
@@ -1199,7 +1156,14 @@ def HostToolsSaigo(host, options):
   llvm_host_arch_flags, llvm_inputs, llvm_deps = \
       CmakeHostArchFlags(host, options)
   if TripleIsMSVC(host):
-    base_env = PrepareVSEnv()
+    # This value matches the version of cl.exe currently used by the bots, but
+    # it needs to be made explicit in order to run on Goma
+    # (crbug.com/1292405). This will need to be updated when LLVM requires a
+    # newer MSVC version.
+    # Flags need to be injected via the env (rather than on the CMake command
+    # line) so they add to rather than overriding the default flags.
+    base_env['CXXFLAGS'] = base_env['CFLAGS'] = '-fmsc-version=1926'
+
     llvm_host_arch_flags += ['-DLLVM_USE_CRT_RELEASE=MT',
                              '-DLLVM_USE_CRT_DEBUG=MTd',
                              '-DLLVM_INCLUDE_BENCHMARKS=OFF',
