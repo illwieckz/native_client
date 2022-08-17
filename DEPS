@@ -8,10 +8,10 @@ vars = {
   # directories contain commits at each revision, you will need to select
   # revisions at latest revision up to a high watermark from each slice.
   # Document the high watermark here:
-  # chrome_rev: 956026
-  "build_rev": "fe157b1f4f755b40dd335a77dee8ba8b3bb832a7", # from cr commit position 956026
-  "buildtools_revision": "075dd7e22837a69189003e4fa84499acf63188cf", # from cr commit position 942746
-  "clang_rev": "9c18fde73776aad8cb0d055d4c64965d05835290", # from cr commit position 946010
+  # chrome_rev: 1021111
+  "build_rev": "4b4fefbabbbfb790c817ea94585f41cce23c2012", # from cr commit position 1021101
+  "buildtools_revision": "34f9ff8fd5f494bf2b886337e6ef6fcea414cb11", # from cr commit position 1015100
+  "clang_rev": "a4054150a17d78a00582c77b7d6d5d1fdd8b27e3", # from cr commit position 1021111
 
   # build_overrides/ is a separate, NaCl-specific repo *forked* from
   # chromium/src/build_overrides/. It may need to be updated if
@@ -232,7 +232,7 @@ hooks = [
                 '--no_resume',
                 '--no_auth',
                 '--bucket', 'chromium-clang-format',
-                '-s', 'buildtools/mac/clang-format.sha1',
+                '-s', 'buildtools/mac/clang-format.x64.sha1',
     ],
   },
   {

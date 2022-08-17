@@ -2488,7 +2488,8 @@ def SetUpLinuxEnvArm(env):
     env.Replace(CC='true', CXX='true', LD='true',
                 AR='true', RANLIB='true', INSTALL=FakeInstall)
   else:
-    sysroot=os.path.join('${SOURCE_ROOT}/build/linux/debian_sid_arm-sysroot')
+    sysroot=os.path.join(
+      '${SOURCE_ROOT}/build/linux/debian_bullseye_arm-sysroot')
     env.Prepend(CCFLAGS=['--sysroot='+sysroot],
                 ASFLAGS=[],
                 # The -rpath-link argument is needed on Ubuntu/Precise to

@@ -75,6 +75,7 @@ int NaClOsIs64BitWindows(void) {
  */
 static int DarwinMajorVersion(void) {
   struct utsname uname_info;
+  int major_version, minor_version, dot_version;
   if (uname(&uname_info) != 0) {
     NaClLog(LOG_ERROR, "uname error\n");
     return 0;
@@ -85,7 +86,6 @@ static int DarwinMajorVersion(void) {
     return 0;
   }
 
-  int major_version, minor_version, dot_version;
   if (!NaClParseKernelVersion(uname_info.release, &major_version,
                               &minor_version, &dot_version)) {
     NaClLog(LOG_ERROR, "couldn't parse release %s\n", uname_info.release);

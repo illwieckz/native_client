@@ -109,7 +109,7 @@ CHROME_LLD = os.path.join(CHROME_CLANG_DIR, 'lld')
 CHROME_LLD_LINK_EXE = os.path.join(CHROME_CLANG_DIR, 'lld-link.exe') \
                       .replace('\\', '/')
 CHROME_SYSROOT_DIR = os.path.join(os.path.dirname(NACL_DIR), 'build',
-                                  'linux', 'debian_sid_amd64-sysroot')
+                                  'linux', 'debian_bullseye_amd64-sysroot')
 
 try:
   # goma documentation recommends using (10 * cpu count)

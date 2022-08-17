@@ -42,17 +42,18 @@
  */
 
 static mach_port_t NaClCreateMachMemoryObject(size_t length, int executable) {
+  int mach_flags;
+  mach_port_t named_right;
+  memory_object_size_t length_copy = length;
+  kern_return_t kr;
   if (0 == length) {
     return MACH_PORT_NULL;
   }
 
-  int mach_flags = MAP_MEM_NAMED_CREATE | VM_PROT_READ | VM_PROT_WRITE |
+  mach_flags = MAP_MEM_NAMED_CREATE | VM_PROT_READ | VM_PROT_WRITE |
                    (executable ? VM_PROT_EXECUTE : 0);
-  mach_port_t named_right;
-  memory_object_size_t length_copy = length;
-  kern_return_t kr =
-      mach_make_memory_entry_64(mach_task_self(), &length_copy, 0, mach_flags,
-                                &named_right, MACH_PORT_NULL);
+  kr = mach_make_memory_entry_64(mach_task_self(), &length_copy, 0, mach_flags,
+                                 &named_right, MACH_PORT_NULL);
   if (kr != KERN_SUCCESS) {
     return MACH_PORT_NULL;
   }
@@ -62,15 +63,10 @@ static mach_port_t NaClCreateMachMemoryObject(size_t length, int executable) {
 
 static void *NaClMachMap(void *start, size_t length, int prot,
                          mach_port_t handle, off_t offset, int fixed) {
-  /*
-   * The flag VM_FLAGS_OVERWRITE isn't available before OSX 10.7.0.
-   * https://code.google.com/p/chromium/issues/detail?id=547246#c8
-   */
-  CHECK(NaClOSX10Dot7OrLater());
-
   int copy = FALSE;
-  int mach_flags =
-      fixed ? VM_FLAGS_FIXED | VM_FLAGS_OVERWRITE : VM_FLAGS_ANYWHERE;
+  int mach_flags;
+  kern_return_t kr;
+  uintptr_t address_downcasted;
 
   static const int kMachProt[] = {
       VM_PROT_NONE,
@@ -85,15 +81,22 @@ static void *NaClMachMap(void *start, size_t length, int prot,
   /* Allow page permissions to be increased later. */
   int max_prot = VM_PROT_ALL | VM_PROT_IS_MASK;
   mach_vm_address_t address = (mach_vm_address_t) start;
-  kern_return_t kr =
-      mach_vm_map(mach_task_self(), &address, length, 0,
-                  mach_flags, handle, offset, copy, kMachProt[prot & 7],
-                  max_prot, VM_INHERIT_NONE);
+
+  /*
+   * The flag VM_FLAGS_OVERWRITE isn't available before OSX 10.7.0.
+   * https://code.google.com/p/chromium/issues/detail?id=547246#c8
+   */
+  CHECK(NaClOSX10Dot7OrLater());
+  mach_flags = fixed ? VM_FLAGS_FIXED | VM_FLAGS_OVERWRITE : VM_FLAGS_ANYWHERE;
+  kr = mach_vm_map(mach_task_self(), &address, length, 0,
+                   mach_flags, handle, offset, copy, kMachProt[prot & 7],
+                   max_prot, VM_INHERIT_NONE);
 
   /*
    * On 32-bit architectures, this forces a down-cast.
    */
-  uintptr_t address_downcasted = (uintptr_t) address;
+  address_downcasted = (uintptr_t) address;
+
   return kr == KERN_SUCCESS ? (void *) address_downcasted
                             : NACL_ABI_MAP_FAILED;
 }
@@ -191,11 +194,11 @@ static uintptr_t NaClDescImcShmMachMap(struct NaClDesc *vself,
                                        struct NaClDescEffector *effp,
                                        void *start_addr, size_t len, int prot,
                                        int flags, nacl_off64_t offset) {
-  UNREFERENCED_PARAMETER(effp);
   struct NaClDescImcShmMach *self = (struct NaClDescImcShmMach *) vself;
 
   void *result;
   nacl_off64_t tmp_off64;
+  UNREFERENCED_PARAMETER(effp);
 
   /*
    * shm must have NACL_ABI_MAP_SHARED in flags, and all calls through

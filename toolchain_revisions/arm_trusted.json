@@ -5,16 +5,16 @@
       "archives": [
         {
           "extract_dir": "",
-          "hash": "39346ea25150194590d623dbec041ff5c107a4f8",
+          "hash": "f7553c6e835e28145c412a81a4dba9698cad7a20",
           "log_url": null,
           "name": "emulator_arm_trusted_precise.tgz",
           "tar_src_dir": "",
-          "url": "https://storage.googleapis.com/nativeclient-archive2/toolchain/2/emulator_arm_trusted_precise.tgz"
+          "url": "https://storage.googleapis.com/nativeclient-archive2/toolchain/4/emulator_arm_trusted_precise.tgz"
         }
       ],
       "version": 1
     }
   },
-  "revision": "2",
-  "revision_hash": "95fcb04604c8dd17d11eecc972dcd1ca2d7294a6"
+  "revision": "4",
+  "revision_hash": "31855b51d0316b2a7964077e068e94a3c6dd9dcc"
 }

@@ -15,7 +15,7 @@ set -o errexit
 
 readonly SDK_ROOT=$(dirname $0)
 readonly GCLIENT_ROOT=$(dirname $(dirname $(dirname $(dirname ${SDK_ROOT}))))
-readonly CHROME_SYSROOT=${GCLIENT_ROOT}/build/linux/debian_sid_arm-sysroot
+readonly CHROME_SYSROOT=${GCLIENT_ROOT}/build/linux/debian_bullseye_arm-sysroot
 readonly QEMU=${SDK_ROOT}/qemu-arm
 readonly QEMU_STOCK=/usr/bin/qemu-arm
 readonly QEMU_JAIL=${CHROME_SYSROOT}

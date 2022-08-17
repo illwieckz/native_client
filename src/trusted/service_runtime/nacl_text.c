@@ -79,12 +79,12 @@ static struct NaClDesc *MakeImcShmMachDesc(uintptr_t size) {
  * Helper function for NaClMakeDynamicTextShared.
  */
 static struct NaClDesc *MakeImcShmDesc(uintptr_t size) {
+  struct NaClDescImcShm *shm;
 #if NACL_OSX
   if (NaClOSX10Dot7OrLater())
     return MakeImcShmMachDesc(size);
 #endif
-  struct NaClDescImcShm *shm =
-      (struct NaClDescImcShm *) malloc(sizeof(struct NaClDescImcShm));
+  shm = (struct NaClDescImcShm *) malloc(sizeof(struct NaClDescImcShm));
   CHECK(shm);
 
   if (!NaClDescImcShmAllocCtor(shm, size, /* executable= */ 1)) {
