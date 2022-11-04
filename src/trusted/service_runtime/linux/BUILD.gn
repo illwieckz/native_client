@@ -78,6 +78,8 @@ if (current_toolchain == bootstrap_toolchain) {
       "-fno-PIC",
       "-fno-pie",
       "-fno-PIE",
+      # Automatic initialization generates memset calls
+      "-ftrivial-auto-var-init=uninitialized",
     ]
 
     sources = [
