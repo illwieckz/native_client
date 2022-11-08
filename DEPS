@@ -84,6 +84,16 @@ deps = {
   "third_party/lss":
     Var("chromium_git") + "/linux-syscall-support.git@" +
     Var("lss_revision"),
+  'third_party/ninja': {
+    'packages': [
+      {
+        # https://chrome-infra-packages.appspot.com/p/infra/3pp/tools/ninja
+        'package': 'infra/3pp/tools/ninja/${{platform}}',
+        'version': 'version:2@1.8.2.chromium.3',
+      }
+    ],
+    'dep_type': 'cipd',
+  },
   "tools/clang":
     Var("chromium_git") + "/chromium/src/tools/clang.git@" + Var("clang_rev"),
   "tools/gyp":
