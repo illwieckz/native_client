@@ -39,6 +39,7 @@ import toolchain_main
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 NACL_DIR = os.path.dirname(SCRIPT_DIR)
+GCLIENT_ROOT = os.path.dirname(NACL_DIR)
 # Use the argparse from third_party to ensure it's the same on all platorms
 python_lib_dir = os.path.join(os.path.dirname(NACL_DIR), 'third_party',
                               'python_libs', 'argparse')
@@ -531,7 +532,8 @@ def MakeCommand(host, options):
 
 
 def NinjaCommand(host, options):
-  ninja_command = [Exe('ninja', host)]
+  ninja_path = os.path.join(GCLIENT_ROOT, 'third_party', 'ninja', 'ninja')
+  ninja_command = [ninja_path]
   if options.goma:
     ninja_command.append('-j%s' % GOMA_JOBS)
   return ninja_command

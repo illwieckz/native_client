@@ -18,6 +18,8 @@ import pnacl_commands
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 NACL_DIR = os.path.dirname(SCRIPT_DIR)
+GCLIENT_ROOT = os.path.dirname(NACL_DIR)
+NINJA_PATH = os.path.join(GCLIENT_ROOT, 'third_party', 'ninja', 'ninja')
 
 CLANG_VER = '3.7.0'
 SAIGO_CLANG_VER = '16.0.0'
@@ -712,8 +714,8 @@ def TargetLibs(bias_arch, is_canonical):
               command.Copy(os.path.join('%(gcc_src)s', 'gcc',
                                         'unwind-generic.h'),
                            os.path.join('include', 'unwind.h')),
-              command.Command([Exe('ninja'), '-v', 'cxx', 'cxxabi']),
-              command.Command([Exe('ninja'),
+              command.Command([NINJA_PATH, '-v', 'cxx', 'cxxabi']),
+              command.Command([NINJA_PATH,
                                'install-cxx',
                                'install-cxxabi',
                                'install-cxx-headers']),
