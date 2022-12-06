@@ -163,8 +163,11 @@ def InstallDriverScripts(logger, subst, srcdir, dstdir, host_windows=False,
   # Install a remote_toolchains_inputs file for reclient, so that resulting .pyc
   # files are not picked up by accident.
   logger.debug(' Installing remote_toolchain_inputs')
+  source_file_name = 'pnacl_remote_toolchain_inputs.txt'
+  if host_windows:
+    source_file_name = 'pnacl_remote_toolchain_inputs_windows.txt'
   source = os.path.join(NACL_DIR, 'toolchain_build',
-                        'pnacl_remote_toolchain_inputs.txt')
+                        source_file_name)
   destination = os.path.join(dstdir, 'remote_toolchain_inputs')
   shutil.copy(source, destination)
   os.chmod(destination,
