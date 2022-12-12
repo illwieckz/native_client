@@ -1009,7 +1009,10 @@ def TargetLibCompilerSaigo(host, options):
           'dependencies': [H('llvm-saigo'), binutils, binutils_x86],
           'commands': [
               command.CopyRecursive('%(' + t + ')s', '%(output)s')
-              for t in [H('llvm-saigo'), binutils, binutils_x86]
+              for t in [H('llvm-saigo'), binutils, binutils_x86]] + [
+              command.Runnable(None,
+                               pnacl_commands.InstallRemoteToolchainInputsSaigo,
+                               '%(output)s')
           ]
       }
   }

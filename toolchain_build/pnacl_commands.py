@@ -120,6 +120,16 @@ def SyncPrebuiltCMake():
     SyncArchive(PREBUILT_CMAKE_DIR, 'cmake', url)
 
 
+# Install a remote_toolchains_inputs file for reclient
+def InstallRemoteToolchainInputs(source_file_name, dstdir):
+  source = os.path.join(NACL_DIR, 'toolchain_build', source_file_name)
+  destination = os.path.join(dstdir, 'remote_toolchain_inputs')
+  shutil.copy(source, destination)
+  os.chmod(destination,
+           stat.S_IRUSR | stat.S_IXUSR | stat.S_IWUSR | stat.S_IRGRP |
+           stat.S_IWGRP | stat.S_IXGRP)
+
+
 def InstallDriverScripts(logger, subst, srcdir, dstdir, host_windows=False,
                          host_64bit=False, extra_config=[]):
   srcdir = subst.SubstituteAbsPaths(srcdir)
@@ -160,20 +170,17 @@ def InstallDriverScripts(logger, subst, srcdir, dstdir, host_windows=False,
     print('HOST_ARCH=x86_64' if host_64bit else 'HOST_ARCH=x86_32', file=f)
     for line in extra_config:
       print(subst.Substitute(line), file=f)
-  # Install a remote_toolchains_inputs file for reclient, so that resulting .pyc
-  # files are not picked up by accident.
   logger.debug(' Installing remote_toolchain_inputs')
   source_file_name = 'pnacl_remote_toolchain_inputs.txt'
   if host_windows:
     source_file_name = 'pnacl_remote_toolchain_inputs_windows.txt'
-  source = os.path.join(NACL_DIR, 'toolchain_build',
-                        source_file_name)
-  destination = os.path.join(dstdir, 'remote_toolchain_inputs')
-  shutil.copy(source, destination)
-  os.chmod(destination,
-           stat.S_IRUSR | stat.S_IXUSR | stat.S_IWUSR | stat.S_IRGRP |
-           stat.S_IWGRP | stat.S_IXGRP)
+  InstallRemoteToolchainInputs(source_file_name, dstdir)
 
+
+def InstallRemoteToolchainInputsSaigo(logger, subst, dstdir):
+  dstdir = subst.SubstituteAbsPaths(dstdir)
+  logger.debug(' Installing remote_toolchain_inputs for saigo')
+  InstallRemoteToolchainInputs('saigo_remote_toolchain_inputs.txt', dstdir)
 
 
 def CheckoutGitBundleForTrybot(repo, destination):
