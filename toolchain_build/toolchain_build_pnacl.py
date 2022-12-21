@@ -799,7 +799,10 @@ def HostTools(host, options):
       H('driver'): {
         'type': 'build',
         'output_subdir': 'bin',
-        'inputs': { 'src': PNACL_DRIVER_DIR },
+        'inputs': { 'src': PNACL_DRIVER_DIR,
+                    'remote-inputs': 'pnacl_remote_toolchain_inputs.txt',
+                    'remote-inputs-win':
+                      'pnacl_remote_toolchain_inputs_windows.txt' },
         'commands': [
             command.Runnable(
                 None,
@@ -1009,10 +1012,7 @@ def TargetLibCompilerSaigo(host, options):
           'dependencies': [H('llvm-saigo'), binutils, binutils_x86],
           'commands': [
               command.CopyRecursive('%(' + t + ')s', '%(output)s')
-              for t in [H('llvm-saigo'), binutils, binutils_x86]] + [
-              command.Runnable(None,
-                               pnacl_commands.InstallRemoteToolchainInputsSaigo,
-                               '%(output)s')
+              for t in [H('llvm-saigo'), binutils, binutils_x86]
           ]
       }
   }
@@ -1230,6 +1230,15 @@ def HostToolsSaigo(host, options):
               ]
               + CreateSymLinksToDirectToNaClTools(host)
       },
+      H('remote-toolchain-inputs-saigo'): {
+          'inputs': {'remote-inputs': 'saigo_remote_toolchain_inputs.txt'},
+          'type': 'build',
+          'output_subdir': 'bin',
+          'commands': [
+              command.Runnable(None,
+                               pnacl_commands.InstallRemoteToolchainInputsSaigo,
+                               '%(output)s')],
+      },
   })
   return tools
 
@@ -1366,7 +1375,8 @@ def GetUploadPackageTargets():
     saigo_os_packages.setdefault(os_name, []).extend(
         ['binutils_%s' % legal_triple,
          'binutils_x86_%s' % legal_triple,
-         'llvm_saigo_%s' % legal_saigo_triple])
+         'llvm_saigo_%s' % legal_saigo_triple,
+         'remote_toolchain_inputs_saigo_%s' % legal_saigo_triple])
 
   # Unsandboxed target IRT libraries
   for os_name in ['linux', 'mac']:
