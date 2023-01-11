@@ -146,6 +146,14 @@
           "name": "newlib_saigo_x86_64.tgz",
           "tar_src_dir": "",
           "url": "https://storage.googleapis.com/nativeclient-once/object/newlib_saigo_x86_64_66c561c75ffd6a5c004c2b58a3f7aaa106b77583.tgz"
+        },
+        {
+          "extract_dir": "",
+          "hash": "94d918162a3c5022eaa1c39a6aa8b86eccaadfa7",
+          "log_url": "https://storage.googleapis.com/nativeclient-once/log/remote_toolchain_inputs_saigo_x86_64_linux_b737b6ee9ce75108346013ed372a36563081f384.log",
+          "name": "remote_toolchain_inputs_saigo_x86_64_linux.tgz",
+          "tar_src_dir": "",
+          "url": "https://storage.googleapis.com/nativeclient-once/object/remote_toolchain_inputs_saigo_x86_64_linux_b737b6ee9ce75108346013ed372a36563081f384.tgz"
         }
       ],
       "version": 1
@@ -295,6 +303,14 @@
           "name": "newlib_saigo_x86_64.tgz",
           "tar_src_dir": "",
           "url": "https://storage.googleapis.com/nativeclient-once/object/newlib_saigo_x86_64_66c561c75ffd6a5c004c2b58a3f7aaa106b77583.tgz"
+        },
+        {
+          "extract_dir": "",
+          "hash": "3d1dee798847787b06960abb1fdb1afb46f7b957",
+          "log_url": "https://storage.googleapis.com/nativeclient-once/log/remote_toolchain_inputs_saigo_x86_64_apple_darwin_b737b6ee9ce75108346013ed372a36563081f384.log",
+          "name": "remote_toolchain_inputs_saigo_x86_64_apple_darwin.tgz",
+          "tar_src_dir": "",
+          "url": "https://storage.googleapis.com/nativeclient-once/object/remote_toolchain_inputs_saigo_x86_64_apple_darwin_b737b6ee9ce75108346013ed372a36563081f384.tgz"
         }
       ],
       "version": 1
@@ -444,11 +460,19 @@
           "name": "newlib_saigo_x86_64.tgz",
           "tar_src_dir": "",
           "url": "https://storage.googleapis.com/nativeclient-once/object/newlib_saigo_x86_64_66c561c75ffd6a5c004c2b58a3f7aaa106b77583.tgz"
+        },
+        {
+          "extract_dir": "",
+          "hash": "06b5541cb4a959f173239c4158cf2f31a03154f6",
+          "log_url": "https://storage.googleapis.com/nativeclient-once/log/remote_toolchain_inputs_saigo_x86_64_win32_b737b6ee9ce75108346013ed372a36563081f384.log",
+          "name": "remote_toolchain_inputs_saigo_x86_64_win32.tgz",
+          "tar_src_dir": "",
+          "url": "https://storage.googleapis.com/nativeclient-once/object/remote_toolchain_inputs_saigo_x86_64_win32_b737b6ee9ce75108346013ed372a36563081f384.tgz"
         }
       ],
       "version": 1
     }
   },
-  "revision": "a6f37a854ed808d480f7c61f62accbc031bf348b",
-  "revision_hash": "d66baee6e2f82a96a68a029061e0822103042d07"
+  "revision": "84258fc0d4661791cdd5bde0bb74ed32dfa18b6c",
+  "revision_hash": "b2bb398d9f221cc83bf6602c4028429658d2ed6e"
 }
