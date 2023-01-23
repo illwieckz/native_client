@@ -1,13 +1,8 @@
 #  Native Client
 
-Welcome to Native Client.  For the latest information about Native Client, see
-the [Native Client project page](http://code.google.com/p/nativeclient).
-
-##  Documentation
-
-Most of the Native Client project documentation is available online:
-
- * Documentation for [Native Client users](http://gonacl.com)
+Native Client is a deprecated sandboxing technology. It is currently used by a
+few third party chrome extensions and chrome apps. Many of the original project
+pages are not longer available. Some documentation can be found at:
  * Documentation for [contributors to Native
    Client](http://www.chromium.org/nativeclient)
  * [Research
