@@ -531,9 +531,12 @@ def MakeCommand(host, options):
   return make_command
 
 
+def NinjaPath():
+  return os.path.join(GCLIENT_ROOT, 'third_party', 'ninja', 'ninja')
+
+
 def NinjaCommand(host, options):
-  ninja_path = os.path.join(GCLIENT_ROOT, 'third_party', 'ninja', 'ninja')
-  ninja_command = [ninja_path]
+  ninja_command = [NinjaPath()]
   if options.goma:
     ninja_command.append('-j%s' % GOMA_JOBS)
   return ninja_command
@@ -837,6 +840,7 @@ def HostTools(host, options):
 
   llvm_host_arch_flags, llvm_inputs, llvm_deps = CmakeHostArchFlags(
       host, options)
+  llvm_host_arch_flags.extend(['-DCMAKE_MAKE_PROGRAM='+NinjaPath()])
   llvm_deps = list(set(tool_deps + llvm_deps))
   llvm_inputs['test_xfails'] = os.path.join(NACL_DIR, 'pnacl', 'scripts')
   llvm_cmake = {
@@ -1160,6 +1164,7 @@ def HostToolsSaigo(host, options):
   base_env = {}
   llvm_host_arch_flags, llvm_inputs, llvm_deps = \
       CmakeHostArchFlags(host, options)
+  llvm_host_arch_flags.extend(['-DCMAKE_MAKE_PROGRAM='+NinjaPath()])
   if TripleIsMSVC(host):
     # This value matches the version of cl.exe currently used by the bots, but
     # it needs to be made explicit in order to run on Goma
