@@ -22,6 +22,11 @@ from buildbot_lib import (
     Step, StepLink, StepText, TryToCleanContents,
     RunningOnBuildbot)
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+NACL_DIR = os.path.dirname(SCRIPT_DIR)
+ROOT_DIR = os.path.dirname(NACL_DIR)
+NINJA_PATH = os.path.join(ROOT_DIR, 'third_party', 'ninja', 'ninja')
+
 
 def SetupContextVars(context):
   # The branch is set to native_client on the main bots, on the trybots it's
@@ -170,7 +175,8 @@ def DoGNBuild(status, context, force_arch=None):
       'gen', gn_out,
   ]
 
-  gn_ninja_cmd = ['ninja', '-C', gn_out, '-v']
+  gn_ninja_cmd = [NINJA_PATH + '.exe' if context.Windows() else NINJA_PATH,
+                  '-C', gn_out, '-v']
   if gn_arch_name not in ('x86', 'x64') and not context.Linux():
     # On non-Linux non-x86, we can only build the untrusted code.
     gn_ninja_cmd.append('untrusted')
