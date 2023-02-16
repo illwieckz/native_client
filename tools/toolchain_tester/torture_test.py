@@ -43,7 +43,8 @@ def list_tests(src_base, *glob_path):
 
 def standard_tests(context, config, exclude, extra_args):
   # TODO: make toolchain_tester.py runnable as a library?
-  command = ['tools/toolchain_tester/toolchain_tester.py',
+  command = [sys.executable,
+             'tools/toolchain_tester/toolchain_tester.py',
              '--exclude=tools/toolchain_tester/' + exclude,
              '--exclude=tools/toolchain_tester/known_failures_base.txt',
              '--config=' + config,
@@ -61,7 +62,8 @@ def standard_tests(context, config, exclude, extra_args):
 
 def eh_tests(context, config, exclude, extra_args):
   # TODO: toolchain_tester.py runnable as a library?
-  command = ['tools/toolchain_tester/toolchain_tester.py',
+  command = [sys.executable,
+             'tools/toolchain_tester/toolchain_tester.py',
              '--exclude=tools/toolchain_tester/' + exclude,
              '--exclude=tools/toolchain_tester/unsuitable_dejagnu_tests.txt',
              '--config=' + config]
