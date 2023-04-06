@@ -3,5 +3,3 @@
 #
 LLVM-Unit::Support/./SupportTests/failed_to_discover_tests_from_gtest linux
 Clang::Interpreter/simple-exception.cpp linux
-LLVM-Unit::DebugInfo/LogicalView/./DebugInfoLogicalViewTests/LogicalViewTest/ELFReader mac
-LLVM-Unit::DebugInfo/LogicalView/./DebugInfoLogicalViewTests/LogicalViewTest/SelectElements mac
