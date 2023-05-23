@@ -2699,14 +2699,18 @@ def MakeGenericLinuxEnv(platform=None):
       )
 
   if linux_env.Bit('build_x86_32'):
+    sysroot=os.path.join(
+      '${SOURCE_ROOT}/build/linux/debian_bullseye_i386-sysroot')
     linux_env.Prepend(
-        CCFLAGS = ['-m32'],
-        LINKFLAGS = ['-m32'],
+        CCFLAGS = ['-m32', '--sysroot='+sysroot],
+        LINKFLAGS = ['-m32', '--sysroot='+sysroot],
         )
   elif linux_env.Bit('build_x86_64'):
+    sysroot=os.path.join(
+      '${SOURCE_ROOT}/build/linux/debian_bullseye_amd64-sysroot')
     linux_env.Prepend(
-        CCFLAGS = ['-m64'],
-        LINKFLAGS = ['-m64'],
+        CCFLAGS = ['-m64', '--sysroot='+sysroot],
+        LINKFLAGS = ['-m64', '--sysroot='+sysroot],
         )
   elif linux_env.Bit('build_arm'):
     SetUpLinuxEnvArm(linux_env)
