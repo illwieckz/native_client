@@ -1210,6 +1210,7 @@ def HostToolsSaigo(host, options):
                   '-DLLVM_ENABLE_ASSERTIONS=ON',
                   '-DLLVM_ENABLE_LIBCXX=OFF',
                   '-DLLVM_ENABLE_ZLIB=OFF',
+                  '-DLLVM_ENABLE_ZSTD=OFF',
                   '-DLLVM_ENABLE_Z3_SOLVER=OFF',
                   '-DLLVM_INSTALL_UTILS=ON',
                   '-DLLVM_ENABLE_LIBXML2=OFF',
