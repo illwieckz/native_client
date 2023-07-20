@@ -9,17 +9,14 @@
  */
 #include <windows.h>
 
-/*
- * #define needed to link in RtlGenRandom(), a.k.a. SystemFunction036. See
- * the "Community Additions" comment on MSDN here:
- *   http://msdn.microsoft.com/en-us/library/windows/desktop/aa387694.aspx
- */
-#define SystemFunction036 NTAPI SystemFunction036
-#include <NTSecAPI.h>
-#undef SystemFunction036
-
 #include "native_client/src/shared/platform/nacl_log.h"
 #include "native_client/src/shared/platform/nacl_secure_random.h"
+
+/*
+ * Prototype for ProcessPrng.
+ * See: https://learn.microsoft.com/en-us/windows/win32/seccng/processprng
+ */
+typedef BOOL (WINAPI ProcessPrngFn)(PBYTE pbData, SIZE_T cbData);
 
 
 static void NaClSecureRngDtor(struct NaClSecureRngIf *vself);
@@ -65,8 +62,14 @@ static void NaClSecureRngDtor(struct NaClSecureRngIf *vself) {
 }
 
 static void NaClSecureRngFilbuf(struct NaClSecureRng *self) {
-  if (!RtlGenRandom(self->buf, sizeof self->buf)) {
-    NaClLog(LOG_FATAL, "RtlGenRandom failed: error 0x%x\n", GetLastError());
+  static ProcessPrngFn *process_prng_fn = NULL;
+  if (!process_prng_fn) {
+    /* This module should be loaded prior to sandbox lockdown. */
+    HMODULE hmod = LoadLibraryW(L"bcryptprimitives.dll");
+    process_prng_fn = (ProcessPrngFn*)GetProcAddress(hmod, "ProcessPrng");
+  }
+  if (!process_prng_fn(self->buf, sizeof self->buf)) {
+    NaClLog(LOG_FATAL, "ProcessPrng failed: error 0x%x\n", GetLastError());
   }
   self->nvalid = sizeof self->buf;
 }
