@@ -17,6 +17,7 @@
  * See: https://learn.microsoft.com/en-us/windows/win32/seccng/processprng
  */
 typedef BOOL (WINAPI ProcessPrngFn)(PBYTE pbData, SIZE_T cbData);
+static ProcessPrngFn *g_process_prng_fn = NULL;
 
 
 static void NaClSecureRngDtor(struct NaClSecureRngIf *vself);
@@ -31,11 +32,12 @@ static struct NaClSecureRngIfVtbl const kNaClSecureRngVtbl = {
 };
 
 void NaClSecureRngModuleInit(void) {
-  return;
+  /* This module should be loaded prior to sandbox lockdown. */
+  HMODULE hmod = LoadLibraryW(L"bcryptprimitives.dll");
+  g_process_prng_fn = (ProcessPrngFn*)GetProcAddress(hmod, "ProcessPrng");
 }
 
 void NaClSecureRngModuleFini(void) {
-  return;
 }
 
 int NaClSecureRngCtor(struct NaClSecureRng *self) {
@@ -58,17 +60,13 @@ static void NaClSecureRngDtor(struct NaClSecureRngIf *vself) {
   struct NaClSecureRng *self = (struct NaClSecureRng *) vself;
   SecureZeroMemory(self->buf, sizeof self->buf);
   vself->vtbl = NULL;
-  return;
 }
 
 static void NaClSecureRngFilbuf(struct NaClSecureRng *self) {
-  static ProcessPrngFn *process_prng_fn = NULL;
-  if (!process_prng_fn) {
-    /* This module should be loaded prior to sandbox lockdown. */
-    HMODULE hmod = LoadLibraryW(L"bcryptprimitives.dll");
-    process_prng_fn = (ProcessPrngFn*)GetProcAddress(hmod, "ProcessPrng");
+  if (!g_process_prng_fn) {
+    NaClLog(LOG_FATAL, "ProcessPrng not initialized\n");
   }
-  if (!process_prng_fn(self->buf, sizeof self->buf)) {
+  if (!g_process_prng_fn(self->buf, sizeof self->buf)) {
     NaClLog(LOG_FATAL, "ProcessPrng failed: error 0x%x\n", GetLastError());
   }
   self->nvalid = sizeof self->buf;
