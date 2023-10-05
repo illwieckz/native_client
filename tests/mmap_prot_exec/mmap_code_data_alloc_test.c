@@ -31,12 +31,12 @@ static void try_map(const char *which, int fd, void *address, size_t size) {
                       PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED,
                       fd, 0);
   if (mapped == MAP_FAILED) {
-    fprintf(stderr, "%s: mmap at %#08x: %s\n",
+    fprintf(stderr, "%s: mmap at 0x%08x: %s\n",
             which, (uintptr_t) address, strerror(errno));
     exit(1);
   }
   if (mapped != address) {
-    fprintf(stderr, "%s: mmap MAP_FIXED returned %#08x instead of %#08x\n",
+    fprintf(stderr, "%s: mmap MAP_FIXED returned 0x%08x instead of 0x%08x\n",
             which, (uintptr_t) mapped, (uintptr_t) address);
     exit(1);
   }
