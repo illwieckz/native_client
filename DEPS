@@ -25,6 +25,16 @@ vars = {
 
   "breakpad_rev": "54fa71efbe50fb2b58096d871575b59e12edba6d",
 
+  # Fetch configuration files required for the 'use_remoteexec' gn arg
+  'download_remoteexec_cfg': False,
+  # RBE instance to use for running remote builds
+  'rbe_instance': Str('projects/rbe-chromium-untrusted/instances/default_instance'),
+  # RBE project to download rewrapper config files for. Only needed if
+  # different from the project used in 'rbe_instance'
+  'rewrapper_cfg_project': Str(''),
+  # reclient CIPD package version
+  "reclient_version": "re_client_version:0.117.1.21520c6-gomaip",
+
   # GN CIPD package version.
   "gn_version": "git_revision:b79031308cc878488202beb99883ec1f2efd9a6d",
 
@@ -128,6 +138,15 @@ deps = {
     ],
     'dep_type': 'cipd',
     'condition': 'host_os == "win"',
+  },
+  'buildtools/reclient': {
+    'packages': [
+      {
+        'package': 'infra/rbe/client/${{platform}}',
+        'version': Var('reclient_version'),
+      }
+    ],
+    'dep_type': 'cipd',
   },
 }
 
@@ -255,6 +274,22 @@ hooks = [
                 '--bucket', 'chromium-clang-format',
                 '-s', 'buildtools/linux64/clang-format.sha1',
     ],
+  },
+  # Download remote exec cfg files
+  {
+    'name': 'fetch_reclient_cfgs',
+    'pattern': '.',
+    'condition': 'download_remoteexec_cfg',
+    'action': ['python3',
+               'src/buildtools/reclient_cfgs/fetch_reclient_cfgs.py',
+               '--rbe_instance',
+               Var('rbe_instance'),
+               '--reproxy_cfg_template',
+               'reproxy.cfg.template',
+               '--rewrapper_cfg_project',
+               Var('rewrapper_cfg_project'),
+               '--quiet',
+               ],
   },
 
   ###
