@@ -8,9 +8,9 @@ vars = {
   # directories contain commits at each revision, you will need to select
   # revisions at latest revision up to a high watermark from each slice.
   # Document the high watermark here:
-  # chrome_rev: 1039183
+  # chrome_rev: 1214139
   "build_rev": "80d1bcf5591e724463be35b794ffe3261a5b9006", # from cr commit position 1039183
-  "buildtools_revision": "dbde006685de56293b98deda3130a5bcf73c354b", # from cr commit position 1038197
+  "buildtools_revision": "cd6bd50a8f5eb44620ab501c26806d3eafe45a66", # from cr commit position 1214139
   "clang_rev": "0fc72d33cae3fefb8ced28631f9a8cf7e54fa873", # from cr commit position 1038345
 
   # build_overrides/ is a separate, NaCl-specific repo *forked* from
