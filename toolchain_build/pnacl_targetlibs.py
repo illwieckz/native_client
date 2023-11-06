@@ -22,7 +22,7 @@ GCLIENT_ROOT = os.path.dirname(NACL_DIR)
 NINJA_PATH = os.path.join(GCLIENT_ROOT, 'third_party', 'ninja', 'ninja')
 
 CLANG_VER = '3.7.0'
-SAIGO_CLANG_VER = '17'
+SAIGO_CLANG_VER = '18'
 
 # Return the file name with the appropriate suffix for an executable file.
 def Exe(file):
@@ -181,7 +181,7 @@ def LibCxxSaigoCflags(bias_arch):
                    NewlibIsystemCflags(bias_arch, saigo=True),
                    '-DHAS_THREAD_LOCAL=1', '-D__ARM_DWARF_EH__',
                    '-D_NEWLIB_VERSION="2.1.0"',
-                   '-D_LIBCPP_HAS_THREAD_API_PTHREAD'])
+                   '-D_LIBCPP_HAS_THREAD_API_PTHREAD', '-D_POSIX_TIMERS=1'])
 
 def NativeTargetFlag(bias_arch):
   arch = TargetArch(bias_arch)

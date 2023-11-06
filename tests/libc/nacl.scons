@@ -23,7 +23,12 @@ def AddLibcTest(env, src, golden_file=None, test_suffix='', is_broken=False,
   compile_env = compile_env or env
   link_env = link_env or env
 
-  obj = compile_env.ComponentObject(name, src)
+  c_env = compile_env.Clone()
+  if c_env.Bit('saigo'):
+    c_env.Append(
+        CCFLAGS=['-Wno-format-truncation', '-Wno-unknown-warning-option'])
+
+  obj = c_env.ComponentObject(name, src)
   nexe = link_env.ComponentProgram(
       name, obj, EXTRA_LIBS=['${NONIRT_LIBS}'] + EXTRA_LIBS)
   node = env.CommandSelLdrTestNacl(name + '.out',
