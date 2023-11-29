@@ -1358,14 +1358,13 @@ def GetUploadPackageTargets():
 
   # Host components
   host_packages = {}
-  for os_name, arch in (('win', 'x86-32'),
-                        ('mac', 'x86-64'),
+  for os_name, arch in [
   # These components are all supposed to be the same regardless of which bot is
   # running, however the 32-bit linux bot is special because it builds and tests
   # packages which are never uploaded. Because the package extraction is done by
   # package_version, we still need to output the 32-bit version of the host
   # packages on that bot.
-                        ('linux', pynacl.platform.GetArch3264())):
+                        ('linux', pynacl.platform.GetArch3264())]:
     triple = pynacl.platform.PlatformTriple(os_name, arch)
     legal_triple = pynacl.gsd_storage.LegalizeName(triple)
     host_packages.setdefault(os_name, []).extend(
@@ -1385,7 +1384,7 @@ def GetUploadPackageTargets():
          'remote_toolchain_inputs_saigo_%s' % legal_saigo_triple])
 
   # Unsandboxed target IRT libraries
-  for os_name in ['linux', 'mac']:
+  for os_name in ['linux']:
     legal_triple = pynacl.gsd_storage.LegalizeName('x86-32-' + os_name)
     host_packages[os_name].append('unsandboxed_runtime_%s' % legal_triple)
   for os_name in ['linux']:
