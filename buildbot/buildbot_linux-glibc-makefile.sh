@@ -157,7 +157,7 @@ if [[ "${BUILDBOT_SLAVE_TYPE:-Trybot}" != "Trybot" ]]; then
   UPLOAD_REV=${BUILDBOT_GOT_REVISION}
   UPLOAD_LOC=x86_toolchain/r${UPLOAD_REV}
 else
-  GSD_BUCKET=nativeclient-trybot/packages
+  GSD_BUCKET=nativeclient-trybot3/packages
   UPLOAD_REV=${BUILDBOT_BUILDERNAME}/${BUILDBOT_BUILDNUMBER}
   UPLOAD_LOC=x86_toolchain/${UPLOAD_REV}
 fi

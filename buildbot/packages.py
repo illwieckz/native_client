@@ -52,7 +52,7 @@ def UploadPackages(filename, is_try, is_sanitizer=False):
       print('Error - could not obtain buildbot build number')
       sys.exit(1)
     upload_rev = '%s/%s' % (buildbot_buildername, buildbot_buildnumber)
-    upload_args = ['--cloud-bucket', 'nativeclient-trybot/packages']
+    upload_args = ['--cloud-bucket', 'nativeclient-trybot3/packages']
 
   with open(filename, 'rt') as f:
     for package_file in f.readlines():

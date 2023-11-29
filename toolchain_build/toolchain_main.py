@@ -527,8 +527,8 @@ class PackageBuilder(object):
           read_buckets=['nativeclient-once'])
     elif self._options.trybot:
       return pynacl.gsd_storage.GSDStorage(
-          write_bucket='nativeclient-once-try',
-          read_buckets=['nativeclient-once', 'nativeclient-once-try'])
+          write_bucket='nativeclient-once-try2',
+          read_buckets=['nativeclient-once', 'nativeclient-once-try2'])
     else:
       read_buckets = []
       if self._options.use_remote_cache:

@@ -42,7 +42,7 @@ SanityCheck() {
 readonly GSUTIL=${GSUTIL:-gsutil}
 
 readonly DIR_ARCHIVE=nativeclient-archive2
-readonly DIR_TRYBOT=nativeclient-trybot
+readonly DIR_TRYBOT=nativeclient-trybot3
 
 readonly GS_PREFIX_ARCHIVE="gs://${DIR_ARCHIVE}"
 readonly GS_PREFIX_TRYBOT="gs://${DIR_TRYBOT}"
