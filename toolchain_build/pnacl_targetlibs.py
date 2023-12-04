@@ -22,6 +22,8 @@ GCLIENT_ROOT = os.path.dirname(NACL_DIR)
 NINJA_PATH = os.path.join(GCLIENT_ROOT, 'third_party', 'ninja', 'ninja')
 
 CLANG_VER = '3.7.0'
+# SAIGO_CLANG_VER needs to be kept in sync with values in
+# toolchain_build/saigo_remote_toolchain_inputs.txt
 SAIGO_CLANG_VER = '18'
 
 # Return the file name with the appropriate suffix for an executable file.
