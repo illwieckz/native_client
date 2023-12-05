@@ -192,9 +192,6 @@ def RunSconsTests(status, context):
       # TODO(mseaborn): Use the same test list as on Linux when the threading
       # tests pass for Mac.
       tests = ['run_hello_world_test_irt']
-    with Step('unsandboxed_tests ' + arch, status, halt_on_fail=False):
-      SCons(context, parallel=True, mode=irt_mode,
-            args=flags_run + ['pnacl_unsandboxed=1'] + tests)
 
 def Main():
   context = BuildContext()

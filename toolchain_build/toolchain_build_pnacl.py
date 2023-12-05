@@ -1383,17 +1383,6 @@ def GetUploadPackageTargets():
          'llvm_saigo_%s' % legal_saigo_triple,
          'remote_toolchain_inputs_saigo_%s' % legal_saigo_triple])
 
-  # Unsandboxed target IRT libraries
-  for os_name in ['linux']:
-    legal_triple = pynacl.gsd_storage.LegalizeName('x86-32-' + os_name)
-    host_packages[os_name].append('unsandboxed_runtime_%s' % legal_triple)
-  for os_name in ['linux']:
-    legal_triple = pynacl.gsd_storage.LegalizeName('arm-' + os_name)
-    host_packages[os_name].append('unsandboxed_runtime_%s' % legal_triple)
-  for os_name in ['linux']:
-    legal_triple = pynacl.gsd_storage.LegalizeName('x86-64-' + os_name)
-    host_packages[os_name].append('unsandboxed_runtime_%s' % legal_triple)
-
   for os_name, os_packages in host_packages.items():
     package_target = '%s_x86' % pynacl.platform.GetOS(os_name)
     package_targets[package_target] = {}
@@ -1547,14 +1536,6 @@ def main():
                     ['le32'] + DIRECT_TO_NACL_ARCHES))
     packages.update(pnacl_targetlibs.SDKLibs('le32', is_canonical,
         ['pnacl_native_clang_driver=1'] if args.native_clang_driver else []))
-    unsandboxed_runtime_canonical = is_canonical or pynacl.platform.IsMac()
-    packages.update(pnacl_targetlibs.UnsandboxedRuntime(
-        'x86-32-%s' % pynacl.platform.GetOS(), unsandboxed_runtime_canonical))
-    if pynacl.platform.IsLinux():
-      packages.update(pnacl_targetlibs.UnsandboxedRuntime(
-          'arm-%s' % pynacl.platform.GetOS(), unsandboxed_runtime_canonical))
-      packages.update(pnacl_targetlibs.UnsandboxedRuntime(
-          'x86-64-%s' % pynacl.platform.GetOS(), unsandboxed_runtime_canonical))
 
   if args.build_sbtc and not args.pnacl_in_pnacl:
     packages.update(pnacl_sandboxed_translator.SandboxedTranslators(
