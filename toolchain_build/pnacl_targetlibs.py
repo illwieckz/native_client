@@ -709,6 +709,7 @@ def TargetLibs(bias_arch, is_canonical):
                    '-DLIBCXX_CXX_ABI=libcxxabi',
                    '-DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=1',
                    '-DLIBCXXABI_ENABLE_SHARED=0',
+                   '-DLIBCXXABI_USE_LLVM_UNWINDER=OFF',
                    '-DCMAKE_POSITION_INDEPENDENT_CODE=OFF',
                    '-DCMAKE_C_FLAGS=' + LibCxxSaigoCflags(bias_arch),
                    '-DCMAKE_CXX_FLAGS=' + LibCxxSaigoCflags(bias_arch),
