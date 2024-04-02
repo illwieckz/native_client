@@ -803,9 +803,15 @@ def HostTools(host, options):
         'type': 'build',
         'output_subdir': 'bin',
         'inputs': { 'src': PNACL_DRIVER_DIR,
-                    'remote-inputs': 'pnacl_remote_toolchain_inputs.txt',
+                    'remote-inputs':
+                      os.path.join(NACL_DIR,
+                                   'toolchain_build',
+                                   'pnacl_remote_toolchain_inputs.txt'),
                     'remote-inputs-win':
-                      'pnacl_remote_toolchain_inputs_windows.txt' },
+                      os.path.join(NACL_DIR,
+                                   'toolchain_build',
+                                   'pnacl_remote_toolchain_inputs_windows.txt')
+                  },
         'commands': [
             command.Runnable(
                 None,
@@ -1237,7 +1243,10 @@ def HostToolsSaigo(host, options):
               + CreateSymLinksToDirectToNaClTools(host)
       },
       H('remote-toolchain-inputs-saigo'): {
-          'inputs': {'remote-inputs': 'saigo_remote_toolchain_inputs.txt'},
+          'inputs': {'remote-inputs':
+                        os.path.join(NACL_DIR,
+                                     'toolchain_build',
+                                     'saigo_remote_toolchain_inputs.txt')},
           'type': 'build',
           'output_subdir': 'bin',
           'commands': [
