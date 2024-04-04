@@ -1,5 +1,6 @@
 ../lib/libclang-cpp.so
 ../lib/libclang-cpp.so.18git
+../lib/libclang-cpp.so.19.0git
 ../lib/libclang-cpp.so.19git
 ../lib/libclang.so
 ../lib/libclang.so.18.0.0git
@@ -11,6 +12,7 @@
 ../lib/libLLVM-18git.so
 ../lib/libLLVM-19git.so
 ../lib/libLLVM.so
+../lib/libLLVM.so.19.0git
 ../lib/libLTO.so
 ../lib/libLTO.so.18git
 ../lib/libLTO.so.19git
