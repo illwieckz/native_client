@@ -125,16 +125,16 @@
         },
         {
           "extract_dir": "",
-          "hash": "aba05fc76eba6d502bc8f87c95bbd16f0ac0cc5f",
-          "log_url": "https://storage.googleapis.com/nativeclient-once/log/remote_toolchain_inputs_saigo_x86_64_linux_fe1ae214c3ca74e74ea5c624f0a5b11b3c4ea6c8.log",
+          "hash": "19d2405de5e33a9c014e8c500f0b01682da69308",
+          "log_url": "https://storage.googleapis.com/nativeclient-once/log/remote_toolchain_inputs_saigo_x86_64_linux_ef14362917db5718a9512684fa0ad2518c23005e.log",
           "name": "remote_toolchain_inputs_saigo_x86_64_linux.tgz",
           "tar_src_dir": "",
-          "url": "https://storage.googleapis.com/nativeclient-once/object/remote_toolchain_inputs_saigo_x86_64_linux_fe1ae214c3ca74e74ea5c624f0a5b11b3c4ea6c8.tgz"
+          "url": "https://storage.googleapis.com/nativeclient-once/object/remote_toolchain_inputs_saigo_x86_64_linux_ef14362917db5718a9512684fa0ad2518c23005e.tgz"
         }
       ],
       "version": 1
     }
   },
-  "revision": "eb14f1f5f1bb22c91d0bc3ac97181c8618267813",
-  "revision_hash": "07f88bb299d26b8f81dc8fbe5c24678c5488f32c"
+  "revision": "48ef8680df38e3484d14ed28f97a383aaba033ed",
+  "revision_hash": "6b34bed32b189da75de88466cd20444943c67296"
 }
