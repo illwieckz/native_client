@@ -1,7 +1,18 @@
-#!/usr/bin/python3
+#!/usr/bin/env vpython3
 # Copyright (c) 2013 The Native Client Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+# [VPYTHON:BEGIN]
+# wheel: <
+#   name: "infra/python/wheels/python-dateutil-py3"
+#   version: "version:2.8.1"
+# >
+# wheel: <
+#   name: "infra/python/wheels/six-py3"
+#   version: "version:1.15.0"
+# >
+# [VPYTHON:END]
 
 import argparse
 import collections
