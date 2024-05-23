@@ -6,9 +6,9 @@ import("//build/toolchain/gcc_toolchain.gni")
 
 # This toolchain's sole purpose is to compile nacl_helper_bootstrap.c.
 # That requires a separate toolchain because that's the most reasonable way
-# to instantiate the standard configs in a context where use_gold=false
-# and use_debug_fission=false when the main build is using either
-# use_gold=true or use_debug_fission=true. See ../BUILD.gn for details.
+# to instantiate the standard configs in a context where use_debug_fission=false
+# when the main build is using use_debug_fission=true. See ../BUILD.gn for
+# details.
 
 template("nacl_bootstrap_toolchain") {
   clang_toolchain(target_name) {
@@ -16,7 +16,6 @@ template("nacl_bootstrap_toolchain") {
       current_cpu = invoker.toolchain_cpu
       current_os = target_os
       use_debug_fission = false
-      use_gold = false
     }
   }
 }
