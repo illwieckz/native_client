@@ -44,7 +44,7 @@ readonly TOOLCHAIN_BUILD="${NACL_ROOT}/toolchain_build/toolchain_build_pnacl.py"
 
 # For different levels of make parallelism change this in your env
 readonly PNACL_CONCURRENCY=${PNACL_CONCURRENCY:-8}
-# Concurrency for builds using the host's system compiler (which might be goma)
+# Concurrency for builds using the host's system compiler
 readonly PNACL_CONCURRENCY_HOST=${PNACL_CONCURRENCY_HOST:-${PNACL_CONCURRENCY}}
 PNACL_PRUNE=${PNACL_PRUNE:-true}
 

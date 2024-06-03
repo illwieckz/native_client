@@ -130,8 +130,6 @@ def ParseStandardCommandLine(context):
   parser.add_option('--no-scons', dest='no_scons', default=False,
                     action='store_true', help='Do not run the SCons build '
                     '(SCons will still be used to run tests)')
-  parser.add_option('--no-goma', dest='no_goma', default=False,
-                    action='store_true', help='Do not run with goma')
   parser.add_option('--use-breakpad-tools', dest='use_breakpad_tools',
                     default=False, action='store_true',
                     help='Use breakpad tools for testing')
@@ -194,7 +192,6 @@ def ParseStandardCommandLine(context):
   context['step_suffix'] = options.step_suffix
   context['no_gn'] = options.no_gn
   context['no_scons'] = options.no_scons
-  context['no_goma'] = options.no_goma
   context['coverage'] = options.coverage
   context['use_breakpad_tools'] = options.use_breakpad_tools
   context['scons_args'] = options.scons_args

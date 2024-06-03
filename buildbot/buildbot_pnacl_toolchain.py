@@ -30,10 +30,6 @@ BUILD_DIR = os.path.join(NACL_DIR, 'build')
 PACKAGE_VERSION_DIR = os.path.join(BUILD_DIR, 'package_version')
 PACKAGE_VERSION_SCRIPT = os.path.join(PACKAGE_VERSION_DIR, 'package_version.py')
 
-GOMA_DEFAULT_PATH = '/b/build/goma'
-GOMA_PATH = os.environ.get('GOMA_DIR', GOMA_DEFAULT_PATH)
-GOMA_CTL = os.path.join(GOMA_PATH, 'goma_ctl.py')
-
 # As this is a buildbot script, we want verbose logging. Note however, that
 # toolchain_build has its own log settings, controlled by its CLI flags.
 logging.getLogger().setLevel(logging.DEBUG)
@@ -55,8 +51,6 @@ parser.add_argument('--sanitize', choices=['address'
                                            #, 'thread', 'memory', 'undefined'
                                           ],
                     help='Build with corresponding sanitizer')
-parser.add_argument('--no-goma', action='store_true', default=False,
-                    help='Do not run with goma')
 args = parser.parse_args()
 
 host_os = buildbot_lib.GetHostPlatform()
@@ -77,13 +71,6 @@ toolchain_install_dir = os.path.join(
     'toolchain',
     '%s_%s' % (host_os, pynacl.platform.GetArch()),
     'pnacl_newlib')
-
-use_goma = (buildbot_lib.RunningOnBuildbot() and not args.no_goma
-            and os.path.isfile(GOMA_CTL))
-
-# If NOCONTROL_GOMA is set, the script does not start/stop goma compiler_proxy.
-control_goma = use_goma and not os.environ.get('NOCONTROL_GOMA')
-
 
 def ToolchainBuildCmd(sync=False, extra_flags=[]):
   sync_flag = ['--sync'] if sync else []
@@ -111,9 +98,6 @@ def ToolchainBuildCmd(sync=False, extra_flags=[]):
   # See https://code.google.com/p/nativeclient/issues/detail?id=3830
   if host_os == 'win':
     executable_args.append('--disable-llvm-assertions')
-
-  if use_goma:
-    executable_args.append('--goma=' + GOMA_PATH)
 
   return [sys.executable] + executable_args + sync_flag + extra_flags
 
@@ -147,9 +131,6 @@ if host_os != 'win':
          os.path.join(
              NACL_DIR, '..', 'tools', 'clang', 'scripts', 'update.py')])
 
-if control_goma:
-  buildbot_lib.Command(context, cmd=[sys.executable, GOMA_CTL, 'restart'])
-
 # The package_version tools don't have a way to distinguish canonical packages
 # (i.e. those we want to upload) from non-canonical ones; they only know how to
 # process all the archives that are present. We can't just leave out the
@@ -158,9 +139,6 @@ if control_goma:
 # First build only the packages that will be uploaded, and upload them.
 with buildbot_lib.Step('Start toolchain build', status):
   RunWithLog(ToolchainBuildCmd(sync=True, extra_flags=['--canonical-only']))
-
-if control_goma:
-  buildbot_lib.Command(context, cmd=[sys.executable, GOMA_CTL, 'stop'])
 
 if args.skip_tests:
   sys.exit(0)

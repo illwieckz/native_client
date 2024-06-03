@@ -259,8 +259,6 @@ for platform in [
     arch_flags = ''
     real_arch = arch
     arch_part = '-' + arch
-    if platform == 'win7' and arch == '32':
-      arch_flags += ' --no-goma'
     if arch == '':
       arch_part = ''
       real_arch = '64'

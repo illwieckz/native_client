@@ -112,13 +112,6 @@ CHROME_LLD_LINK_EXE = os.path.join(CHROME_CLANG_DIR, 'lld-link.exe') \
 CHROME_SYSROOT_DIR = os.path.join(os.path.dirname(NACL_DIR), 'build',
                                   'linux', 'debian_bullseye_amd64-sysroot')
 
-try:
-  # goma documentation recommends using (10 * cpu count)
-  GOMA_JOBS = 10 * multiprocessing.cpu_count()
-except NotImplementedError:
-  # Use an arbitrary, large enough constant
-  GOMA_JOBS = 100
-
 # Required SDK version and target version for Mac builds.
 # See MAC_SDK_FLAGS, below.
 MAC_SDK_MIN = '10.10'
@@ -280,23 +273,6 @@ def AflFuzzEnvList(host, options):
   arg_map = AflFuzzEnvMap(host, options)
   return sorted([key + '=' + arg_map[key] for key in arg_map])
 
-def GomaCmakeFlags(path):
-  return ['-DCMAKE_%s_COMPILER_LAUNCHER=%s' %
-          (lang, os.path.join(path, 'gomacc')) for lang in ['C', 'CXX']]
-
-def GomaCompilers(host, options):
-  cc, cxx, _, _ = CompilersForHost(host)
-  if not options.goma or (cc, cxx) != (CHROME_CLANG, CHROME_CLANGXX):
-    return (cc, cxx)
-  return (' '.join([os.path.join(options.goma, 'gomacc'), cc]),
-          ' '.join([os.path.join(options.goma, 'gomacc'), cxx]))
-
-def GomaPathDirs(host, options):
-  cc, cxx, _, _ = CompilersForHost(host)
-  if not options.goma or (cc, cxx) != (CHROME_CLANG, CHROME_CLANGXX):
-    return []
-  return [CHROME_CLANG_DIR]
-
 def GSDJoin(*args):
   return '_'.join([pynacl.gsd_storage.LegalizeName(arg) for arg in args])
 
@@ -381,9 +357,6 @@ def ConfigureHostArchFlags(host, extra_cflags, options, extra_configure=None,
     cc, cxx, ar, ranlib = CompilersForHost(host)
     hashables += [cc, cxx, ar, ranlib]
 
-    if options.goma:
-      cc, cxx = GomaCompilers(host, options)
-
     # Introduce afl-fuzz compiler wrappers if needed.
     if use_afl_fuzz:
       cc, cxx = AflFuzzCompilers(options.afl_fuzz_dir)
@@ -447,8 +420,6 @@ def CmakeHostArchFlags(host, options):
   else:
     cc, cxx, _, _ = CompilersForHost(host)
   hashables = [cc, cxx]
-  if options.goma:
-    cmake_flags.extend(GomaCmakeFlags(options.goma))
 
   cmake_flags.extend(['-DCMAKE_C_COMPILER='+cc, '-DCMAKE_CXX_COMPILER='+cxx])
   if ProgramPath('ccache'):
@@ -517,10 +488,7 @@ def MakeCommand(host, options):
     # The make that ships with msys sometimes hangs when run with -j.
     # The ming32-make that comes with the compiler itself reportedly doesn't
     # have this problem, but it has issues with pathnames with LLVM's build.
-    if options.goma:
-      make_command.append('-j%s' % GOMA_JOBS)
-    else:
-      make_command.append('-j%(cores)s')
+    make_command.append('-j%(cores)s')
 
   if TripleIsWindows(host):
     # There appears to be nothing we can pass at top-level configure time
@@ -537,8 +505,6 @@ def NinjaPath():
 
 def NinjaCommand(host, options):
   ninja_command = [NinjaPath()]
-  if options.goma:
-    ninja_command.append('-j%s' % GOMA_JOBS)
   return ninja_command
 
 
@@ -759,10 +725,9 @@ def HostTools(host, options):
                   '--program-prefix=arm-nacl-',
                   '--target=arm-nacl',
                   '--with-sysroot=/arm-nacl',
-                  ], path_dirs=GomaPathDirs(host, options))] +
+                  ])] +
               DummyDirCommands(binutils_dummy_dirs) + [
-              command.Command(MakeCommand(host, options),
-                              path_dirs=GomaPathDirs(host, options)),
+              command.Command(MakeCommand(host, options)),
               command.Command(MAKE_DESTDIR_CMD + [install_step])] +
               [command.RemoveDirectory(os.path.join('%(output)s', dir))
                for dir in ('lib', 'lib32')] +
@@ -879,10 +844,8 @@ def HostTools(host, options):
                   '-DLLVM_TARGETS_TO_BUILD=X86;ARM;Mips',
                   '-DSUBZERO_TARGETS_TO_BUILD=ARM32;MIPS32;X8632;X8664',
                   '%(llvm_src)s'],
-                  env=llvm_cmake_config_env,
-                  path_dirs=GomaPathDirs(host, options))] +
+                  env=llvm_cmake_config_env)] +
               [command.Command(NinjaCommand(host, options) + ['-v'],
-                               path_dirs=GomaPathDirs(host, options),
                                env=AflFuzzEnvMap(host, options)),
                command.Command(NinjaCommand(host, options) + ['install'])] +
               CreateSymLinksToDirectToNaClTools(host) +
@@ -942,15 +905,13 @@ def HostTools(host, options):
                    '--with-clang-srcdir=%(abs_clang_src)s',
                    'ac_cv_have_decl_strerror_s=no',
                    'ac_cv_lib_xml2_xmlReadFile=no',
-                  ] + shared,
-                  path_dirs=GomaPathDirs(host, options))] +
+                  ] + shared)] +
               [command.Command(MakeCommand(host, options) +
                   AflFuzzEnvList(host, options) + [
                   'VERBOSE=1',
                   'PNACL_BROWSER_TRANSLATOR=0',
                   'SUBZERO_SRC_ROOT=%(abs_subzero_src)s',
-                  'all'],
-                  path_dirs=GomaPathDirs(host, options)),
+                  'all']),
               command.Command(MAKE_DESTDIR_CMD + [
                   'SUBZERO_SRC_ROOT=%(abs_subzero_src)s',
                   'install'])] +
@@ -1078,8 +1039,7 @@ def HostToolsDirectToNacl(host, options):
                                  '-I', os.path.dirname(NACL_DIR),
                                  '-DREDIRECT_DATA="redirector_table_pnacl.txt"',
                                  os.path.join(REDIRECTOR_WIN32_SRC,
-                                              'redirector.c')],
-                                path_dirs=GomaPathDirs(host, options)),
+                                              'redirector.c')]),
             ],
         },
     })
@@ -1123,10 +1083,8 @@ def HostToolsDirectToNacl(host, options):
                    # version we use to build.
                    '--disable-gold',
                    '--enable-targets=x86_64-nacl,i686-nacl',
-                   '--disable-werror'],
-                  path_dirs=GomaPathDirs(host, options)),
-              command.Command(MakeCommand(host, options),
-                              path_dirs=GomaPathDirs(host, options)),
+                   '--disable-werror']),
+              command.Command(MakeCommand(host, options)),
               command.Command(MAKE_DESTDIR_CMD + [install_step])] +
               # Remove the share dir from this binutils build and leave the one
               # from the newer version used for bitcode linking. Always remove
@@ -1172,14 +1130,6 @@ def HostToolsSaigo(host, options):
       CmakeHostArchFlags(host, options)
   llvm_host_arch_flags.extend(['-DCMAKE_MAKE_PROGRAM='+NinjaPath()])
   if TripleIsMSVC(host):
-    # This value matches the version of cl.exe currently used by the bots, but
-    # it needs to be made explicit in order to run on Goma
-    # (crbug.com/1292405). This will need to be updated when LLVM requires a
-    # newer MSVC version.
-    # Flags need to be injected via the env (rather than on the CMake command
-    # line) so they add to rather than overriding the default flags.
-    base_env['CXXFLAGS'] = base_env['CFLAGS'] = '-fmsc-version=1926'
-
     llvm_host_arch_flags += ['-DLLVM_USE_CRT_RELEASE=MT',
                              '-DLLVM_USE_CRT_DEBUG=MTd',
                              '-DLLVM_INCLUDE_BENCHMARKS=OFF',
@@ -1224,15 +1174,12 @@ def HostToolsSaigo(host, options):
                   '-DLLVM_ENABLE_PROJECTS=clang',
                   '-DLLVM_BUILD_LLVM_DYLIB=' + build_dylib,
                   '-DLLVM_LINK_LLVM_DYLIB=' + build_dylib,
-                  '-DLLVM_CCACHE_BUILD=' + ('ON' if ProgramPath('ccache') and
-                                            not options.goma else 'OFF'),
+                  '-DLLVM_CCACHE_BUILD=' + ('ON' if ProgramPath('ccache')else 'OFF'),
                   '-DLLVM_ENABLE_TERMINFO=' + ('OFF' if TripleIsLinux(host)
                                                else 'ON'),
                   '%(llvm_saigo_src)s/llvm'],
-                  env=llvm_cmake_config_env,
-                  path_dirs=GomaPathDirs(host, options))] +
+                  env=llvm_cmake_config_env)] +
               [command.Command(NinjaCommand(host, options) + ['-v'],
-                               path_dirs=GomaPathDirs(host, options),
                                env=cc_env),
                command.Command(NinjaCommand(host, options) + ['install']),
                # The FileCheck binary is needed by some tests.
@@ -1459,8 +1406,6 @@ def main():
   parser.add_argument('--afl-fuzz-dir',
                       help='Compile using afl-fuzz compiler wrappers in'
                       + ' given directory')
-  parser.add_argument('--goma',
-                      help='Compile using goma in given directory')
   args, leftover_args = parser.parse_known_args()
   if '-h' in leftover_args or '--help' in leftover_args:
     print('The following arguments are specific to toolchain_build_pnacl.py:')
