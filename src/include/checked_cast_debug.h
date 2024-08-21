@@ -13,16 +13,9 @@
 #ifndef NATIVE_CLIENT_SRC_INCLUDE_CHECKED_CAST_DEBUG_H_
 #define NATIVE_CLIENT_SRC_INCLUDE_CHECKED_CAST_DEBUG_H_ 1
 
+#include <sstream>
 
 #include "checked_cast.h"
-
-
-// CPPLint complains about strstream, but in this case its use is justified:
-// http://www.corp.google.com/eng/doc/cppguide.xml#Streams states "use streams
-// only for logging" and logging is the use case here. (In addition, since
-// we're logging data whose type is templatized, printf isn't a particularly
-// attractive option.)
-#include <strstream>
 
 #include "native_client/src/include/nacl_string.h"
 
@@ -67,19 +60,16 @@ INLINE target_t nacl
   //
   // Since we don't know the types of target_t and source_t until
   // template instantiation time, it's not trivial to write a correct
-  // printf format string for them. Using std::strstream sidesteps
+  // printf format string for them. Using std::ostringstream sidesteps
   // that issue, at least for common types.
   //
-  std::ostrstream stm;
+  std::ostringstream stm;
   stm << "Overflow converting value " << input << ". "
     << "Valid range for destination type is ("
     << target_limits::min() << ", "
     << target_limits::max() << ")";
 
-  // Transfer the strstream to a nacl::string. This makes sure
-  // it's null-terminated.
-  nacl::string strLog(stm.str(), stm.pcount());
-  NaClLog(LOG_FATAL, "%s", strLog.c_str());
+  NaClLog(LOG_FATAL, "%s", stm.str().c_str());
 
   // Unreachable, assuming that LOG_FATAL really is fatal
   return 0;
