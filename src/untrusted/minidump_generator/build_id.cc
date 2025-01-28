@@ -105,7 +105,7 @@ static int GetBuildId(const char **data, size_t *size) {
 #if !DYNAMIC_LOADING_SUPPORT
 int nacl_get_build_id(const char **data, size_t *size) {
   if (__note_gnu_build_id_start != NULL) {
-    assert(__note_gnu_build_id_end >= __note_gnu_build_id_start);
+    assert(+__note_gnu_build_id_end >= +__note_gnu_build_id_start);
     return GetBuildIdFromNotes(__note_gnu_build_id_start,
                                __note_gnu_build_id_end,
                                data, size);
