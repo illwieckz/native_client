@@ -53,6 +53,10 @@ def FindLibgcc(cxx_bin):
 
 
 def main(args):
+  # b/397463803: Set this until CrOS' user enumeration is done; its `clang` will
+  # error out otherwise.
+  os.environ["CROSTC_IS_AWARE_OF_THIS_USECASE"] = "1"
+
   # Find path to compiler, either from the command line or the environment,
   # falling back to just 'g++'
   if '--compiler' in args:
